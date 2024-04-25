@@ -41,6 +41,10 @@ class SRDataset(Dataset):
     def __getitem__(self, index):
         hr_path = self.img_list[index]
         lr_path = self.lr_path + '/' + hr_path.split('/')[-1]
+        if not self.is_train:
+            dir_list = hr_path.split('/')
+            dir_list[-2] = 'LQ'
+            lr_path = '/'.join(dir_list)
 
         lr_img = Image.open(lr_path)
         hr_img = Image.open(hr_path)

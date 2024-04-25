@@ -15,7 +15,7 @@ def main():
     parser.add_argument('--gpu_ids', type=str, default='0,1,2,3,4,5,6,7')
 
     parser.add_argument('--batch_size', type=int, default=32)
-    parser.add_argument('--dev_ratio', type=float, default=0.01)
+    # parser.add_argument('--dev_ratio', type=float, default=0.01)
     parser.add_argument('--lr_G', type=float, default=1e-4)
     parser.add_argument('--weight_decay_G', type=float, default=0)
     parser.add_argument('--beta1_G', type=float, default=0.9)
@@ -58,10 +58,10 @@ def main():
     parser.add_argument('--D_nf', type=int, default=32)
 
     # data dir
-    parser.add_argument('--hr_path', type=list, default=['data/celebahq-512/', 'data/ffhq-512/'])
-    parser.add_argument('--lr_path', type=str, default='data/lr-128/')
+    parser.add_argument('--hr_path', type=list, default=['datasets/train/GT/', 'datasets 2/train/GT/'])
+    parser.add_argument('--lr_path', type=str, default='train_LQ_rg')
     parser.add_argument('--checkpoint_dir', type=str, default='check_points/ESRGAN-V1/')
-    parser.add_argument('--val_dir', type=str, default='dev_show')
+    parser.add_argument('--val_dir', type=list, default=['datasets/val'])
     parser.add_argument('--training_state', type=str, default='check_points/ESRGAN-V1/state/')
 
     # resume the training
@@ -88,11 +88,17 @@ def main():
         total_img_list.extend(glob(hr_path + '/*'))
 
     random.shuffle(total_img_list)
-    dev_list = total_img_list[:int(len(total_img_list) * args.dev_ratio)]
-    train_list = total_img_list[int(len(total_img_list) * args.dev_ratio):]
+    # dev_list = total_img_list[:int(len(total_img_list) * args.dev_ratio)]
+    # train_list = total_img_list[int(len(total_img_list) * args.dev_ratio):]
+
+    # ---------use the given split from the prf----------
+    train_list = total_img_list
+    val_img_list = []
+    for val_path in args.val_dir:
+        val_img_list.extend(glob(val_path + "/GT/*"))
 
     train_loader = create_dataloader(args, train_list, is_train=True, n_threads=len(args.gpu_ids.split(',')))
-    dev_loader = create_dataloader(args, dev_list, is_train=False, n_threads=len(args.gpu_ids.split(',')))
+    dev_loader = create_dataloader(args, val_img_list, is_train=False, n_threads=len(args.gpu_ids.split(',')))
 
     #### create model
     model = SRGANModel(args, is_train=True)
@@ -110,6 +116,8 @@ def main():
         current_step = 0
         start_epoch = 0
 
+    # default is 100000
+    # 5000 train imgs
     total_epochs = int(math.ceil(args.niter / len(train_loader)))
 
     #### training
