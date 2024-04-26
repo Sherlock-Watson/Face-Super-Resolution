@@ -3,7 +3,7 @@ import cv2
 from skimage import transform as trans
 import dlib
 
-dlib_detector = dlib.get_frontal_face_detector()
+dlib_detector = dlib.cnn_face_detection_model_v1('mmod_human_face_detector.dat')
 sp = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
 
 
@@ -65,7 +65,7 @@ def dlib_alignment(img, landmarks, padding=0.25, size=128, moving=0.0):
 
 
 def dlib_detect_face(img, image_size=(128, 128), padding=0.25, moving=0.0):
-    dets = dlib_detector(img, 0)
+    dets = dlib_detector(img, 4)
     if dets:
         if isinstance(dets, dlib.rectangles):
             det = max(dets, key=lambda d: d.area())

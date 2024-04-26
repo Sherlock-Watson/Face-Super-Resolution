@@ -11,8 +11,12 @@
 module load anaconda3/23.5.2
 eval "$(conda shell.bash hook)"
 conda activate face_resolution
-cd Face-Super-Resolution
+cd /home/msai/xi0001ye/Face-Super-Resolution
 
-python train.py \
+# python train.py \
+# --gpu_ids 0 \
+# --batch_size 8
+
+python test.py \
 --gpu_ids 0 \
 --batch_size 8

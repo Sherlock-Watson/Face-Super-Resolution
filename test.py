@@ -6,6 +6,7 @@ from models.SRGAN_model import SRGANModel
 import numpy as np
 import argparse
 import utils
+import os
 
 _transform = transforms.Compose([transforms.ToTensor(),
                                  transforms.Normalize(mean=[0.5, 0.5, 0.5],
@@ -58,7 +59,7 @@ def get_FaceSR_opt():
     parser.add_argument('--D_nf', type=int, default=64)
 
     # data dir
-    parser.add_argument('--pretrain_model_G', type=str, default='90000_G.pth')
+    parser.add_argument('--pretrain_model_G', type=str, default='/home/msai/xi0001ye/Face-Super-Resolution/check_points/ESRGAN-V1/20000_G.pth')
     parser.add_argument('--pretrain_model_D', type=str, default=None)
 
     args = parser.parse_args()
@@ -79,9 +80,14 @@ def sr_forward(img, padding=0.5, moving=0.1):
     rec_img = face_recover(output_img, M * 4, img)
     return output_img, rec_img
 
-img_path = 'input.jpg'
-img = utils.read_cv2_img(img_path)
-output_img, rec_img = sr_forward(img)
-utils.save_image(output_img, 'output_face.jpg')
-utils.save_image(rec_img, 'output_img.jpg')
+root_path = "datasets/test/LQ"
+output_path = "test_output"
+
+file_list = os.listdir(root_path)
+for file_path in file_list:
+    img_path = os.path.join(root_path, file_path)
+    img = utils.read_cv2_img(img_path)
+    output_img, rec_img = sr_forward(img)
+    utils.save_image(output_img, f'{output_path}/{file_path}')
+    # utils.save_image(rec_img, f'{output_path}/{file_path}')
 

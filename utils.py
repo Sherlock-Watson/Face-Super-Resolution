@@ -51,7 +51,7 @@ def tensor2im(input_image, imtype=np.uint8, show_size=128):
     im = []
     for i in range(image_numpy.shape[0]):
         im.append(
-            np.array(numpy2im(image_numpy[i], imtype).resize((show_size, show_size), Image.ANTIALIAS)))
+            np.array(numpy2im(image_numpy[i], imtype).resize((show_size, show_size))))
     return np.array(im)
 
 

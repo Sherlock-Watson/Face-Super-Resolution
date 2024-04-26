@@ -5,3 +5,5 @@ datasets 2/
 output
 train_LQ_*/
 readme.txt
+test*/
+*.dat
